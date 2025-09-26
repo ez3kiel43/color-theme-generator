@@ -1,7 +1,22 @@
 export interface Color {
+	label: ColorRole;
 	hex: string;
 	rgb: [number, number, number];
 }
+
+export const colorRoles = [
+	'Background',
+	// 'Accent',
+	'Text',
+	'Info',
+	'Success',
+	'Warning',
+	'Error',
+	'Neutral',
+] as const;
+
+// Type is "Success" | "Warning" | "Error" | ...
+export type ColorRole = (typeof colorRoles)[number];
 
 export function hexToRgb(hex: string): [number, number, number] {
 	const bigint = parseInt(hex.slice(1), 16);

@@ -25,11 +25,25 @@
 					</p>
 				</article>
 				<div id="color-picker">
-					<label for="color-input" class="base-color-label">
+					<label for="base-input" class="base-color-label">
 						Select Base Color:
+						<input type="color" id="base-input" />
 					</label>
-					<input type="color" id="color-input" />
-					<button id="generate-palette">Generate Palette</button>
+
+					<!-- <label for="accent-input" class="accent-color-label">
+						Select Accent Color:
+						<input type="color" id="accent-input" />
+					</label> -->
+					<button
+						id="generate-palette"
+						disabled="disabled"
+						aria-disabled="true"
+					>
+						Generate Palette
+					</button>
+				</div>
+
+				<div>
 					<div id="palette">
 						<!-- Generated colors will be displayed here -->
 					</div>

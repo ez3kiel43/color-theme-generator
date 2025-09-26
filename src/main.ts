@@ -1,24 +1,38 @@
 import { Palette } from './palette';
+import {
+	renderPalette,
+	bindGenerateButton,
+	bindAccentColorInput,
+	bindBaseColorInput,
+} from './dom';
 
-const palette = new Palette();
+// Initialize the app
+function init() {
+	const palette = new Palette();
 
-const inputEl = document.getElementById('color-input') as HTMLInputElement;
-const addBtn = document.getElementById('generate-palette') as HTMLButtonElement;
-const paletteDiv = document.getElementById('palette') as HTMLDivElement;
+	// Function to generate and render a new palette
+	function generateAndRenderPalette() {
+		const colors = palette.getColors().map(c => c.hex);
+		renderPalette(colors);
+	}
 
-addBtn.addEventListener('click', () => {
-	const hex = inputEl.value;
-	palette.addColor(hex);
-	renderPalette();
-});
-
-function renderPalette() {
-	paletteDiv.innerHTML = '';
-	palette.getColors().forEach(color => {
-		const div = document.createElement('div');
-		div.style.backgroundColor = color.hex;
-		div.textContent = color.hex;
-		div.className = 'color-box';
-		paletteDiv.appendChild(div);
+	// Bind UI events
+	bindBaseColorInput((color: string) => {
+		palette.setBaseColor(color); // color comes from the input event
+		palette.setSupportingColors(); // generate supporting colors
 	});
+
+	// bindAccentColorInput((color: string) => {
+	// 	palette.setAccentColor(color);
+	// });
+
+	// Bind the generate button
+	bindGenerateButton(() => {
+		generateAndRenderPalette();
+	});
+
+	// Initial render
+	generateAndRenderPalette();
 }
+
+document.addEventListener('DOMContentLoaded', init);

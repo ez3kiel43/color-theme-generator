@@ -1,25 +1,83 @@
 // src/dom.ts
 
-// Render color swatches into the DOM
-export function renderPalette(palette: [string, string]): void {
-	const container = document.getElementById('palette');
-	if (!container) return;
+import { colorRoles } from './models';
 
-	container.innerHTML = ''; // clear old swatches
-	palette.forEach(color => {
+// Render color swatches into the DOM
+export function renderPalette(palette: string[]): void {
+	const paletteContainer = document.getElementById('palette');
+	if (!paletteContainer) return;
+	console.log('Rendering palette:', palette);
+	paletteContainer.innerHTML = ''; // clear old swatches
+	palette.forEach((color, i) => {
+		//create swatch container
+		const swatchContainer = document.createElement('div');
+		swatchContainer.classList.add('swatch-container');
+		//create swatch and label
 		const swatch = document.createElement('div');
 		swatch.style.background = color;
-		swatch.style.width = '80px';
-		swatch.style.height = '80px';
-		swatch.style.display = 'inline-block';
-		container.appendChild(swatch);
+		swatch.classList.add('swatch');
+		swatch.textContent = color; // Show hex code in swatch
+		swatchContainer.appendChild(swatch); //put swatch in container
+		//create label
+		const swatchLabel = document.createElement('span');
+		swatchLabel.textContent = colorRoles[i]; // Show color role below swatch
+		swatchContainer.appendChild(swatchLabel); //put label in container
+		//add container to palette
+		paletteContainer.appendChild(swatchContainer);
 	});
 }
 
-// Bind the button click to a callback
+// Bind the generate theme button click to a callback
 export function bindGenerateButton(callback: () => void): void {
-	const button = document.getElementById('generate');
+	const button = document.getElementById('generate-palette');
 	if (button) {
 		button.addEventListener('click', callback);
+	}
+}
+
+// link base color input to callback
+export function bindBaseColorInput(callback: (color: string) => void): void {
+	const input = document.getElementById(
+		'base-input'
+	) as HTMLInputElement | null;
+	if (input) {
+		input.addEventListener('input', (event: Event) => {
+			enableInteractiveElement(
+				document.getElementById('generate-palette')!
+			);
+			const target = event.target as HTMLInputElement;
+			callback(target.value);
+		});
+	}
+}
+
+// link accent color input to callback
+export function bindAccentColorInput(callback: (color: string) => void): void {
+	const input = document.getElementById(
+		'accent-input'
+	) as HTMLInputElement | null;
+	if (input) {
+		input.addEventListener('input', (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			callback(target.value);
+		});
+	}
+}
+
+//disable interactive element
+export function disableInteractiveElement(el: HTMLElement): void {
+	if (el) {
+		//Check if the element exists
+		el.setAttribute('disabled', 'true');
+		el.setAttribute('aria-disabled', 'true');
+	}
+}
+
+//enable interactive element
+export function enableInteractiveElement(el: HTMLElement): void {
+	if (el) {
+		//Check if the element exists
+		el.removeAttribute('disabled');
+		el.removeAttribute('aria-disabled');
 	}
 }
