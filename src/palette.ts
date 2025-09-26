@@ -4,7 +4,6 @@ import {
 	defaultPaletteHex,
 	colorRoles,
 } from './utils/models';
-import { luminance } from './utils/luminance';
 import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from './utils/conversions';
 import { getContrast } from './utils/contrast';
 export class Palette {
