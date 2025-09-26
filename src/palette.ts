@@ -1,13 +1,12 @@
 import {
 	Color,
-	hexToRgb,
-	contrast,
 	ColorRole,
-	luminance,
 	defaultPaletteHex,
 	colorRoles,
-} from './models';
-
+} from './utils/models';
+import { luminance } from './utils/luminance';
+import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from './utils/conversions';
+import { getContrast } from './utils/contrast';
 export class Palette {
 	constructor() {
 		//set default Colors
@@ -31,7 +30,7 @@ export class Palette {
 		const pairs: [Color, Color][] = [];
 		for (let i = 0; i < this.colors.length; i++) {
 			for (let j = i + 1; j < this.colors.length; j++) {
-				if (contrast(this.colors[i], this.colors[j]) >= 4.5) {
+				if (getContrast(this.colors[i], this.colors[j]) >= 4.5) {
 					pairs.push([this.colors[i], this.colors[j]]);
 				}
 			}
@@ -61,15 +60,15 @@ export class Palette {
 		const white: Color = {
 			label: 'Text',
 			hex: '#FFFFFF',
-			rgb: [255, 255, 255],
+			rgb: { r: 255, g: 255, b: 255 },
 		};
 		const black: Color = {
 			label: 'Text',
 			hex: '#000000',
-			rgb: [0, 0, 0],
+			rgb: { r: 0, g: 0, b: 0 },
 		};
-		const whiteContrast = contrast(baseColor, white);
-		const blackContrast = contrast(baseColor, black);
+		const whiteContrast = getContrast(baseColor, white);
+		const blackContrast = getContrast(baseColor, black);
 		const textColor = whiteContrast > blackContrast ? white : black;
 		//add text color
 		this.addColor('Text', textColor.hex);
@@ -86,7 +85,7 @@ export class Palette {
 		 *
 		 * For Each Color
 		 * 		1) Calculate luminance of each
-		 * 		2) Check contrast ratio with text color (white or black), goal is 7 or greater (AAA standard)
+		 * 		2) get contrast ratio with text color (white or black), goal is 7 or greater (AAA standard)
 		 * 		3) If color does not meet standard convert to HSL and raise or lower luminance through altering HSL Value
 		 * 		4) Convert back to RGB and re-check contrast ratio
 		 * 		5) repeat steps 3&4 as much as necessary
@@ -100,9 +99,27 @@ export class Palette {
 			i < this.colors.length;
 			i++
 		) {
-			isTextWhite
-				? contrast(textColor, this.colors[i])
-				: contrast(this.colors[i], textColor);
+			if (isTextWhite) {
+				//darken the color (possibly change saturation and hue for future)
+				let color = this.colors[i];
+
+				let contrast: number = getContrast(textColor, color);
+
+				do {
+					let converted = rgbToHsl({ ...color.rgb });
+					let newRGB = hslToRgb(
+						converted.h,
+						converted.s,
+						converted.l - 0.1
+					);
+					color.hex = rgbToHex(newRGB);
+					color.rgb = newRGB;
+
+					contrast = getContrast(textColor, color);
+				} while (contrast < 7);
+			} else {
+				//lighten the color (possibly add more saturation for future updates)
+			}
 		}
 	}
 }

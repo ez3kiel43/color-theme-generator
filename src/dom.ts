@@ -1,6 +1,6 @@
 // src/dom.ts
 
-import { colorRoles } from './models';
+import { colorRoles } from './utils/models';
 
 // Render color swatches into the DOM
 export function renderPalette(palette: string[]): void {
