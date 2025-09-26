@@ -20,7 +20,7 @@ export const defaultPaletteHex = [
 	'#ffffff',
 	'#0099FF',
 	'#33CC66',
-	'#FFCC00',
+	'#ffae00',
 	'#FF3333',
 	'#808099',
 ];

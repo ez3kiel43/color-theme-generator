@@ -68,16 +68,24 @@ input[type='color'] {
 	background-color: #e5e5e5;
 }
 
-button#generate-palette {
+button {
 	margin-top: 1rem;
 	padding: 0.5rem 1rem;
 	font-size: 1rem;
-	border: black solid 2px;
+	transition: background-color 0.3s ease;
+	border: none;
 	border-radius: 4px;
+}
+
+button:hover {
+	cursor: pointer;
+}
+
+button#generate-palette {
+	border: black solid 2px;
 	cursor: pointer;
 	background-color: #e5e5e5;
 	color: black;
-	transition: background-color 0.3s ease;
 	justify-self: center;
 }
 
@@ -116,4 +124,61 @@ button#generate-palette {
 	line-height: 80px;
 	border-radius: 8px;
 	font-size: 0.8rem;
+}
+
+#preview {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1.5rem;
+	background-color: #333333;
+	color: white;
+	padding: 2rem 0.25rem;
+}
+
+h3 {
+	font-size: 32px;
+}
+
+h4 {
+	font-size: 24px;
+}
+
+#preview p.body {
+	text-align: center;
+	font-size: 16px;
+}
+
+#preview div#btns {
+	display: flex;
+	gap: 0.5rem;
+}
+
+#preview button {
+	color: white;
+}
+
+#preview button:hover {
+	cursor: pointer;
+	opacity: 0.8;
+}
+
+#info-btn {
+	background-color: #0099ff;
+}
+
+#success-btn {
+	background-color: #33cc66;
+}
+
+#warning-btn {
+	background-color: #ffae00;
+}
+
+#danger-btn {
+	background-color: #ff3333;
+}
+
+#neutral-btn {
+	background-color: #808099;
 }
