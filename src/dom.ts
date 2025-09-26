@@ -15,6 +15,7 @@ export function renderPalette(palette: string[]): void {
 		//create swatch and label
 		const swatch = document.createElement('div');
 		swatch.style.background = color;
+		swatch.style.color = palette[1];
 		swatch.classList.add('swatch');
 		swatch.textContent = color; // Show hex code in swatch
 		swatchContainer.appendChild(swatch); //put swatch in container

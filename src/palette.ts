@@ -1,6 +1,22 @@
-import { Color, hexToRgb, contrast, ColorRole } from './models';
+import {
+	Color,
+	hexToRgb,
+	contrast,
+	ColorRole,
+	luminance,
+	defaultPaletteHex,
+	colorRoles,
+} from './models';
 
 export class Palette {
+	constructor() {
+		//set default Colors
+
+		for (const role in colorRoles) {
+			this.addColor(colorRoles[role], defaultPaletteHex[role]);
+		}
+	}
+
 	private colors: Color[] = [];
 
 	addColor(label: ColorRole, hex: string): void {
@@ -58,5 +74,35 @@ export class Palette {
 		//add text color
 		this.addColor('Text', textColor.hex);
 		console.log('Selected text color:', textColor.hex);
+
+		// if text color is white, make info/success/warning/error darker shades of default
+		const isTextWhite = textColor.hex === '#FFFFFF';
+		/** start with default colors for supports
+		 * info = blue #0099FF
+		 * success = green #33CC66
+		 * warning = orangey-yellow #FFCC00
+		 * error = red #FF3333
+		 * neutral = mid-gray #808099
+		 *
+		 * For Each Color
+		 * 		1) Calculate luminance of each
+		 * 		2) Check contrast ratio with text color (white or black), goal is 7 or greater (AAA standard)
+		 * 		3) If color does not meet standard convert to HSL and raise or lower luminance through altering HSL Value
+		 * 		4) Convert back to RGB and re-check contrast ratio
+		 * 		5) repeat steps 3&4 as much as necessary
+		 * 		6) return final colour selection
+		 *
+		 * Assign colours to their 'roles' in the palette
+		 * */
+
+		for (
+			let i = this.colors.findIndex(c => c.label === 'Info');
+			i < this.colors.length;
+			i++
+		) {
+			isTextWhite
+				? contrast(textColor, this.colors[i])
+				: contrast(this.colors[i], textColor);
+		}
 	}
 }
