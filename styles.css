@@ -1,0 +1,89 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	font-family: sans-serif;
+	padding: 1rem;
+	background-color: #e5e5e5;
+	max-height: 800px;
+	height: 100svh;
+	width: 100svw;
+	max-width: 1920px;
+	overflow: hidden;
+}
+
+.color-box {
+	display: inline-block;
+	width: 80px;
+	height: 80px;
+	margin: 0.5rem;
+	color: white;
+	text-align: center;
+	line-height: 80px;
+	border-radius: 8px;
+	font-size: 0.8rem;
+}
+
+main {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	height: 100%;
+}
+
+section {
+	margin-bottom: 2rem;
+	width: 50%;
+	padding: 1rem;
+	border: black solid 4px;
+	overflow: auto;
+}
+
+#instructions {
+	width: 75%;
+	border-bottom: black solid 2px;
+}
+
+#instructions h2 {
+	margin-bottom: 1rem;
+}
+
+#instructions p {
+	margin-bottom: 0.5rem;
+	line-height: 1.4;
+}
+
+#color-picker {
+	padding: 1rem 0;
+	margin-top: 0.5rem;
+}
+
+label {
+	display: block;
+	margin-bottom: 0.5rem;
+	font-weight: bold;
+}
+
+input[type='color'] {
+	width: 80px;
+	height: 50px;
+	border: none;
+	cursor: pointer;
+	display: block;
+	background-color: #e5e5e5;
+}
+
+button#generate-palette {
+	margin-top: 1rem;
+	padding: 0.5rem 1rem;
+	font-size: 1rem;
+	border: black solid 2px;
+	border-radius: 4px;
+	cursor: pointer;
+	background-color: #e5e5e5;
+	color: black;
+	transition: background-color 0.3s ease;
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Color Theme Generator</title>
+		<link rel="stylesheet" href="/styles.css" />
+	</head>
+	<body>
+		<h1>WCAG Compatible Color Theme Generator</h1>
+		<main>
+			<section id="controls">
+				<article id="instructions">
+					<h2>Instructions:</h2>
+					<p>
+						This tool helps you generate a color theme that is
+						compatible with WCAG accessibility standards.
+						Select a base color and generate a palette of
+						colors that ensure sufficient contrast for text
+						and UI elements.
+					</p>
+					<p>
+						Choose a base color using the color picker below,
+						then click "Generate Palette" to see a selection
+						of colors that meet WCAG guidelines.
+					</p>
+				</article>
+				<div id="color-picker">
+					<label for="color-input" class="base-color-label">
+						Select Base Color:
+					</label>
+					<input type="color" id="color-input" />
+					<button id="generate-palette">Generate Palette</button>
+					<div id="palette">
+						<!-- Generated colors will be displayed here -->
+					</div>
+				</div>
+			</section>
+			<section>
+				<h2>Palette Preview:</h2>
+			</section>
+		</main>
+
+		<script type="module" src="/src/main.ts"></script>
+	</body>
+</html>
