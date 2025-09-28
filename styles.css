@@ -17,9 +17,9 @@ body {
 
 main {
 	display: flex;
-	flex-wrap: wrap;
 	justify-content: center;
 	height: 100%;
+	gap: 1rem;
 }
 
 section {
@@ -56,7 +56,7 @@ label {
 	display: block;
 	margin-bottom: 0.5rem;
 	font-weight: bold;
-	width: 40%;
+	width: 26%;
 }
 
 input[type='color'] {
@@ -126,14 +126,16 @@ button#generate-palette {
 	font-size: 0.8rem;
 }
 
-#preview {
+#palette-preview,
+#alerts-preview {
 	display: flex;
 	flex-direction: column;
 	align-items: center;
 	gap: 1.5rem;
 	background-color: #333333;
 	color: white;
-	padding: 2rem 0.25rem;
+	padding: 2rem 1.5rem;
+	margin: 1rem;
 }
 
 h3 {
@@ -144,21 +146,21 @@ h4 {
 	font-size: 24px;
 }
 
-#preview p.body {
+#palette-preview p.body {
 	text-align: center;
 	font-size: 16px;
 }
 
-#preview div#btns {
+#palette-preview div#btns {
 	display: flex;
 	gap: 0.5rem;
 }
 
-#preview button {
+#alerts-preview button {
 	color: white;
 }
 
-#preview button:hover {
+#palette-preview button:hover {
 	cursor: pointer;
 	opacity: 0.8;
 }
@@ -181,4 +183,12 @@ h4 {
 
 #neutral-btn {
 	background-color: #808099;
+}
+
+.alert {
+	background-color: #808099;
+	border-radius: 8px;
+	width: 100%;
+	min-height: 200px;
+	padding: 0.5rem;
 }

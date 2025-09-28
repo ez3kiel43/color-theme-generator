@@ -33,14 +33,9 @@
 							value="#333333"
 						/>
 					</label>
-
-					<!-- <label for="accent-input" class="accent-color-label">
-						Select Accent Color:
-						<input type="color" id="accent-input" />
-					</label> -->
 					<button
 						id="generate-palette"
-						disabled="disabled"
+						disabled="true"
 						aria-disabled="true"
 					>
 						Generate Palette
@@ -55,7 +50,7 @@
 			</section>
 			<section>
 				<h2>Palette Preview:</h2>
-				<div id="preview">
+				<div id="palette-preview">
 					<h3>This Is A Heading</h3>
 					<h4>This Is A Subheading</h4>
 					<p class="body">
@@ -65,12 +60,19 @@
 						nostrum repellendus, rem sed, fugit rerum
 						inventore officiis libero laboriosam?
 					</p>
+				</div>
+				<h2>UI Alerts Preview:</h2>
+				<div id="alerts-preview">
 					<div id="btns">
 						<button id="info-btn">Info</button>
 						<button id="success-btn">Success</button>
 						<button id="warning-btn">Warning</button>
 						<button id="danger-btn">Danger</button>
 						<button id="neutral-btn">Neutral</button>
+					</div>
+					<div class="alert">
+						<h4>This is an Alert!</h4>
+						<p>Here is some informative text</p>
 					</div>
 				</div>
 			</section>

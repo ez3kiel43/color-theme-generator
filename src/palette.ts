@@ -6,19 +6,28 @@ import {
 } from './utils/models';
 import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from './utils/conversions';
 import { getContrast } from './utils/contrast';
+import { adjustLuminance } from './utils/luminance';
 export class Palette {
 	constructor() {
 		//set default Colors
-
 		for (const role in colorRoles) {
-			this.addColor(colorRoles[role], defaultPaletteHex[role]);
+			this.colors.push({
+				label: colorRoles[role],
+				hex: defaultPaletteHex[role],
+				rgb: hexToRgb(defaultPaletteHex[role]),
+			});
 		}
+		this.setSupportingColors();
 	}
 
 	private colors: Color[] = [];
 
 	addColor(label: ColorRole, hex: string): void {
-		this.colors.push({ label, hex, rgb: hexToRgb(hex) });
+		this.colors[this.colors.findIndex(c => c.label === label)] = {
+			label,
+			hex,
+			rgb: hexToRgb(hex),
+		};
 	}
 
 	getColors(): Color[] {
@@ -39,8 +48,7 @@ export class Palette {
 
 	setBaseColor(hex: string): void {
 		// Example logic to set base color and regenerate palette
-		this.colors = []; // Clear existing colors
-		this.addColor('Background', hex);
+		this.addColor('Base', hex);
 	}
 
 	// setAccentColor(hex: string): void {
@@ -71,7 +79,6 @@ export class Palette {
 		const textColor = whiteContrast > blackContrast ? white : black;
 		//add text color
 		this.addColor('Text', textColor.hex);
-		console.log('Selected text color:', textColor.hex);
 
 		// if text color is white, make info/success/warning/error darker shades of default
 		const isTextWhite = textColor.hex === '#FFFFFF';
@@ -92,33 +99,5 @@ export class Palette {
 		 *
 		 * Assign colours to their 'roles' in the palette
 		 * */
-
-		for (
-			let i = this.colors.findIndex(c => c.label === 'Info');
-			i < this.colors.length;
-			i++
-		) {
-			if (isTextWhite) {
-				//darken the color (possibly change saturation and hue for future)
-				let color = this.colors[i];
-
-				let contrast: number = getContrast(textColor, color);
-
-				do {
-					let converted = rgbToHsl({ ...color.rgb });
-					let newRGB = hslToRgb(
-						converted.h,
-						converted.s,
-						converted.l - 0.1
-					);
-					color.hex = rgbToHex(newRGB);
-					color.rgb = newRGB;
-
-					contrast = getContrast(textColor, color);
-				} while (contrast < 7);
-			} else {
-				//lighten the color (possibly add more saturation for future updates)
-			}
-		}
 	}
 }

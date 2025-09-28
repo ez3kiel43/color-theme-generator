@@ -1,12 +1,13 @@
 // src/dom.ts
 
 import { colorRoles } from './utils/models';
+import { Color } from './utils/models';
 
 // Render color swatches into the DOM
 export function renderPalette(palette: string[]): void {
 	const paletteContainer = document.getElementById('palette');
 	if (!paletteContainer) return;
-	console.log('Rendering palette:', palette);
+	// console.log('Rendering palette:', palette);
 	paletteContainer.innerHTML = ''; // clear old swatches
 	palette.forEach((color, i) => {
 		//create swatch container
@@ -81,4 +82,23 @@ export function enableInteractiveElement(el: HTMLElement): void {
 		el.removeAttribute('disabled');
 		el.removeAttribute('aria-disabled');
 	}
+}
+
+export function updatePreview(colors: string[]): void {
+	const palettePreview = document.querySelector(
+		'#palette-preview'
+	) as HTMLDivElement;
+	const alertsPreview = document.querySelector(
+		'#alerts-preview'
+	) as HTMLDivElement;
+
+	palettePreview.style.backgroundColor = colors[0];
+	palettePreview.style.color = colors[1];
+
+	alertsPreview.style.backgroundColor = colors[0];
+	alertsPreview.style.color = colors[1];
+	alertsPreview.querySelectorAll('button').forEach((btn, i) => {
+		btn.style.backgroundColor = colors[i + 2];
+		btn.style.color = colors[1];
+	});
 }

@@ -4,6 +4,7 @@ import {
 	bindGenerateButton,
 	bindAccentColorInput,
 	bindBaseColorInput,
+	updatePreview,
 } from './dom';
 
 // Initialize the app
@@ -14,6 +15,7 @@ function init() {
 	function generateAndRenderPalette() {
 		const colors = palette.getColors().map(c => c.hex);
 		renderPalette(colors);
+		updatePreview(colors);
 	}
 
 	// Bind UI events

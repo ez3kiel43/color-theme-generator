@@ -10,14 +10,12 @@ export interface Rgb {
 }
 
 export const colorRoles = [
-	'Background',
+	'Base',
 	// 'Accent',
+	'BkgLight',
+	'BkgDark',
 	'Text',
-	'Info',
-	'Success',
-	'Warning',
-	'Error',
-	'Neutral',
+	'Icon',
 ] as const;
 
 export const defaultPaletteHex = [
