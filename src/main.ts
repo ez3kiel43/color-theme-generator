@@ -1,40 +1,29 @@
-import { Palette } from './palette';
 import {
 	renderPalette,
 	bindGenerateButton,
-	bindAccentColorInput,
 	bindBaseColorInput,
 	updatePreview,
+	bindSwatches,
 } from './dom';
+import { Palette } from './Palette';
+import { hexToRgb } from './utils/models';
 
 // Initialize the app
 function init() {
-	const palette = new Palette();
-
-	// Function to generate and render a new palette
-	function generateAndRenderPalette() {
-		const colors = palette.getColors().map(c => c.hex);
-		renderPalette(colors);
-		updatePreview(colors);
-	}
+	let palettes: Palette[] = [];
+	let currentPalette: Palette;
 
 	// Bind UI events
 	bindBaseColorInput((color: string) => {
-		palette.setBaseColor(color); // color comes from the input event
-		palette.setSupportingColors(); // generate supporting colors
+		currentPalette = new Palette(hexToRgb(color));
 	});
-
-	// bindAccentColorInput((color: string) => {
-	// 	palette.setAccentColor(color);
-	// });
 
 	// Bind the generate button
 	bindGenerateButton(() => {
-		generateAndRenderPalette();
+		palettes.push(currentPalette);
+		renderPalette(currentPalette?.getColors());
+		bindSwatches(updatePreview);
 	});
-
-	// Initial render
-	generateAndRenderPalette();
 }
 
 document.addEventListener('DOMContentLoaded', init);

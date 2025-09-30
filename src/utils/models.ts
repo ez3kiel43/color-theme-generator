@@ -1,32 +1,35 @@
-export interface Color {
-	label: ColorRole;
-	hex: string;
-	rgb: Rgb;
-}
+import { Color } from '../Color';
+
 export interface Rgb {
 	r: number;
 	g: number;
 	b: number;
 }
 
-export const colorRoles = [
-	'Base',
-	// 'Accent',
-	'BkgLight',
-	'BkgDark',
-	'Text',
-	'Icon',
-] as const;
+export interface Hsl {
+	h: number;
+	s: number;
+	l: number;
+}
 
-export const defaultPaletteHex = [
-	'#333333',
-	'#ffffff',
-	'#0099FF',
-	'#33CC66',
-	'#ffae00',
-	'#FF3333',
-	'#808099',
-];
+export function hexToRgb(hex: string): Color {
+	const bigint = parseInt(hex.slice(1), 16);
+	const r = (bigint >> 16) & 255;
+	const g = (bigint >> 8) & 255;
+	const b = bigint & 255;
+	return new Color(r, g, b);
+}
 
-// Type is "Success" | "Warning" | "Error" | ...
-export type ColorRole = (typeof colorRoles)[number];
+export interface hexPalette {
+	base: string;
+	lightBkgs: string[];
+	darkBkgs: string[];
+	icon: string;
+}
+
+export interface previewPalette {
+	text: string;
+	bkg: string;
+	base: string;
+	accent?: string;
+}

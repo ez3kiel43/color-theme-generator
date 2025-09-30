@@ -1,31 +1,52 @@
-// src/dom.ts
-
-import { colorRoles } from './utils/models';
-import { Color } from './utils/models';
+import { hexPalette, previewPalette } from './utils/models';
 
 // Render color swatches into the DOM
-export function renderPalette(palette: string[]): void {
-	const paletteContainer = document.getElementById('palette');
-	if (!paletteContainer) return;
-	// console.log('Rendering palette:', palette);
-	paletteContainer.innerHTML = ''; // clear old swatches
-	palette.forEach((color, i) => {
-		//create swatch container
-		const swatchContainer = document.createElement('div');
-		swatchContainer.classList.add('swatch-container');
-		//create swatch and label
-		const swatch = document.createElement('div');
-		swatch.style.background = color;
-		swatch.style.color = palette[1];
-		swatch.classList.add('swatch');
-		swatch.textContent = color; // Show hex code in swatch
-		swatchContainer.appendChild(swatch); //put swatch in container
-		//create label
-		const swatchLabel = document.createElement('span');
-		swatchLabel.textContent = colorRoles[i]; // Show color role below swatch
-		swatchContainer.appendChild(swatchLabel); //put label in container
-		//add container to palette
-		paletteContainer.appendChild(swatchContainer);
+export function renderPalette(palette: hexPalette): void {
+	const baseContainer = document.querySelector(
+		'#palette #base'
+	)! as HTMLDivElement;
+	const lightContainer = document.querySelector(
+		'#palette #light-mode'
+	)! as HTMLDivElement;
+	const darkContainer = document.querySelector(
+		'#palette #dark-mode'
+	)! as HTMLDivElement;
+
+	baseContainer.innerHTML = '';
+	lightContainer.innerHTML = '';
+	darkContainer.innerHTML = '';
+
+	//Add base color swatch to page
+	const baseSwatch = document.createElement('div');
+	baseSwatch.classList.add('swatch');
+	baseSwatch.classList.add('base');
+	baseSwatch.style.backgroundColor = palette.base;
+	baseSwatch.textContent = palette.base;
+	baseSwatch.style.color = palette.lightBkgs[palette.lightBkgs.length - 1];
+	baseContainer.appendChild(baseSwatch);
+
+	palette.lightBkgs.map(c => {
+		const lightSwatch = document.createElement('div');
+		lightSwatch.classList.add('swatch');
+		lightSwatch.style.backgroundColor = c;
+		lightSwatch.textContent = c;
+		lightSwatch.style.color =
+			palette.darkBkgs[palette.darkBkgs.length - 1];
+		lightContainer.appendChild(lightSwatch);
+	});
+
+	palette.darkBkgs.map(c => {
+		const darkSwatch = document.createElement('div');
+		darkSwatch.classList.add('swatch');
+		darkSwatch.style.backgroundColor = c;
+		darkSwatch.textContent = c;
+		darkSwatch.style.color =
+			palette.lightBkgs[palette.lightBkgs.length - 1];
+		darkContainer.appendChild(darkSwatch);
+	});
+
+	document.querySelectorAll('.swatch:not(.base)').forEach(s => {
+		s.addEventListener('click', (e: Event) => {});
 	});
 }
 
@@ -66,6 +87,24 @@ export function bindAccentColorInput(callback: (color: string) => void): void {
 	}
 }
 
+//bind swatches to update preview function !Call when generating new palette!
+export function bindSwatches(callback: (colors: previewPalette) => void): void {
+	document.querySelectorAll('.swatch').forEach(s => {
+		s.addEventListener('click', (e: Event) => {
+			const target = e.target as HTMLDivElement;
+			const base = document.querySelector(
+				'.swatch.base'
+			) as HTMLDivElement;
+			const p: previewPalette = {
+				base: base.style.backgroundColor,
+				text: target.style.color,
+				bkg: target.style.backgroundColor,
+			};
+			callback(p);
+		});
+	});
+}
+
 //disable interactive element
 export function disableInteractiveElement(el: HTMLElement): void {
 	if (el) {
@@ -84,21 +123,28 @@ export function enableInteractiveElement(el: HTMLElement): void {
 	}
 }
 
-export function updatePreview(colors: string[]): void {
+export function updatePreview(colors: previewPalette): void {
+	console.log('updating preview');
 	const palettePreview = document.querySelector(
 		'#palette-preview'
 	) as HTMLDivElement;
-	const alertsPreview = document.querySelector(
-		'#alerts-preview'
-	) as HTMLDivElement;
+	if (!palettePreview) {
+		alert('An error ocurred rendering the Palette');
+		return;
+	}
 
-	palettePreview.style.backgroundColor = colors[0];
-	palettePreview.style.color = colors[1];
+	palettePreview.style.backgroundColor = colors.bkg;
+	palettePreview.style.color = colors.text;
+	let btn1 = palettePreview.querySelector(
+		'.cta-btn.primary'
+	)! as HTMLButtonElement;
+	let btn2 = palettePreview.querySelector(
+		'.cta-btn.alternate'
+	)! as HTMLButtonElement;
 
-	alertsPreview.style.backgroundColor = colors[0];
-	alertsPreview.style.color = colors[1];
-	alertsPreview.querySelectorAll('button').forEach((btn, i) => {
-		btn.style.backgroundColor = colors[i + 2];
-		btn.style.color = colors[1];
-	});
+	btn1.style.backgroundColor = colors.base;
+	btn1.style.color = colors.bkg;
+	btn2.style.borderColor = colors.base;
+	btn2.style.color = colors.base;
+	btn2.style.backgroundColor = colors.bkg;
 }

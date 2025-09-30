@@ -1,103 +1,158 @@
-import {
-	Color,
-	ColorRole,
-	defaultPaletteHex,
-	colorRoles,
-} from './utils/models';
-import { hexToRgb, rgbToHex, rgbToHsl, hslToRgb } from './utils/conversions';
-import { getContrast } from './utils/contrast';
-import { adjustLuminance } from './utils/luminance';
+import { Color } from './Color';
+import { hexPalette } from './utils/models';
+
 export class Palette {
-	constructor() {
-		//set default Colors
-		for (const role in colorRoles) {
-			this.colors.push({
-				label: colorRoles[role],
-				hex: defaultPaletteHex[role],
-				rgb: hexToRgb(defaultPaletteHex[role]),
-			});
-		}
-		this.setSupportingColors();
-	}
+	base: Color;
+	colors: {
+		base: Color;
+		lightBkg: Color[];
+		darkBkg: Color[];
+		analagous: Color[];
+		complimentary: Color[];
+		icon: Color;
+	};
 
-	private colors: Color[] = [];
-
-	addColor(label: ColorRole, hex: string): void {
-		this.colors[this.colors.findIndex(c => c.label === label)] = {
-			label,
-			hex,
-			rgb: hexToRgb(hex),
+	constructor(base: Color) {
+		this.base = base;
+		const bkgs = this.getBkgs(base);
+		const compColor = this.getComplimentaryColor(base);
+		const compBkgs = this.getBkgs(compColor);
+		this.colors = {
+			base: this.base,
+			lightBkg: bkgs.slice(0, 4),
+			darkBkg: bkgs.slice(4),
+			analagous: this.getAnalagousColors(base),
+			complimentary: [compColor, ...compBkgs],
+			icon: base,
 		};
 	}
 
-	getColors(): Color[] {
-		return this.colors;
+	/** Relative luminance for WCAG */
+	luminance(color: Color): number {
+		const a = [color.r, color.g, color.b].map(v => {
+			v /= 255;
+			return v <= 0.03928
+				? v / 12.92
+				: Math.pow((v + 0.055) / 1.055, 2.4);
+		});
+		return 0.2126 * a[0] + 0.7152 * a[1] + 0.0722 * a[2];
 	}
 
-	getAccessiblePairs(): [Color, Color][] {
-		const pairs: [Color, Color][] = [];
-		for (let i = 0; i < this.colors.length; i++) {
-			for (let j = i + 1; j < this.colors.length; j++) {
-				if (getContrast(this.colors[i], this.colors[j]) >= 4.5) {
-					pairs.push([this.colors[i], this.colors[j]]);
+	getContrast(c1: Color, c2: Color): number {
+		const l1 = this.luminance(c1);
+		const l2 = this.luminance(c2);
+		return (Math.max(l1, l2) + 0.05) / (Math.min(l1, l2) + 0.05);
+	}
+
+	/** Adjust color to reach target contrast relative to reference */
+	adjustColorForContrast(
+		color: Color,
+		reference: Color,
+		targetRatio: number = 5.5
+	): Color {
+		let attempts = 0;
+		const maxAttempts = 50;
+		let adjusted = color;
+
+		while (
+			this.getContrast(adjusted, reference) < targetRatio &&
+			attempts < maxAttempts
+		) {
+			const contrast = this.getContrast(adjusted, reference);
+			const direction =
+				this.luminance(adjusted) > this.luminance(reference);
+
+			// Try luminance adjustment
+			const lighterOrDarker = adjusted.adjustLuminance(
+				direction,
+				0.25
+			);
+			if (this.getContrast(lighterOrDarker, reference) > contrast) {
+				adjusted = lighterOrDarker;
+			} else {
+				// Try saturation nudge
+				const desat = adjusted.adjustSaturation(10);
+				if (this.getContrast(desat, reference) > contrast) {
+					adjusted = desat;
+				} else {
+					// fallback
+					adjusted = adjusted
+						.adjustLuminance(direction, 0.25)
+						.adjustSaturation(5);
 				}
 			}
+			attempts++;
 		}
-		return pairs;
+
+		return adjusted;
 	}
 
-	setBaseColor(hex: string): void {
-		// Example logic to set base color and regenerate palette
-		this.addColor('Base', hex);
+	/** Generate background colors */
+	getBkgs(base: Color): Color[] {
+		let lightBase;
+		let darkBase;
+
+		if (this.base.rgbToHsl().l < 50) {
+			lightBase = this.base.adjustLuminance(true, 0.5);
+			darkBase = this.base.adjustLuminance(false, 0.1);
+		} else {
+			lightBase = this.base.adjustLuminance(true, 0.1);
+			darkBase = this.base.adjustLuminance(false, 0.5);
+		}
+
+		const light = this.adjustColorForContrast(lightBase, this.base, 3);
+		const dark = this.adjustColorForContrast(darkBase, this.base, 3);
+
+		return [
+			light,
+			light.adjustSaturation(10),
+			light.adjustLuminance(true, 0.5),
+			this.adjustColorForContrast(
+				light.adjustLuminance(true, 0.6).adjustSaturation(15),
+				dark,
+				7
+			),
+			dark,
+			dark.adjustSaturation(10),
+			dark.adjustLuminance(false, 0.4),
+			this.adjustColorForContrast(
+				dark.adjustLuminance(false, 0.5).adjustSaturation(15),
+				light,
+				7
+			),
+		];
 	}
 
-	// setAccentColor(hex: string): void {
-	// 	// Example logic to set accent color and regenerate palette
-	// 	// This is just a placeholder; implement your own logic
-	// 	this.addColor('Accent', hex);
-	// }
+	/** Get complimentary colour */
+	getComplimentaryColor(base: Color): Color {
+		let baseHsl = base.rgbToHsl();
+		let complimentaryHue = (baseHsl.h + 180) % 360;
+		let newColor = Color.hslToRgb({ ...baseHsl, h: complimentaryHue });
+		this.adjustColorForContrast(newColor, base, 4.5);
 
-	setSupportingColors(): void {
-		//Define the base and accent colors first
-		// if (this.colors.length < 2) return; // Need at least base and accent
-		const baseColor = this.colors[0];
-		// const accentColor = this.colors[1];
+		return newColor;
+	}
 
-		//determine text color (black or white) based on contrast with base
-		const white: Color = {
-			label: 'Text',
-			hex: '#FFFFFF',
-			rgb: { r: 255, g: 255, b: 255 },
+	/** Get analgous colours in either direction */
+	getAnalagousColors(base: Color): Color[] {
+		let baseHsl = base.rgbToHsl();
+		let aHue1 = baseHsl.h + 25;
+		let aHue2 = baseHsl.h - 25;
+		let analagousColors = [
+			Color.hslToRgb({ ...baseHsl, h: aHue1 }),
+			Color.hslToRgb({ ...baseHsl, h: aHue2 }),
+		];
+
+		return analagousColors;
+	}
+
+	/** Return all palette colors as HEX */
+	getColors(): hexPalette {
+		return {
+			base: this.colors.base.rgbToHex(),
+			lightBkgs: this.colors.lightBkg.map(c => c.rgbToHex()),
+			darkBkgs: this.colors.darkBkg.map(c => c.rgbToHex()),
+			icon: this.colors.icon.rgbToHex(),
 		};
-		const black: Color = {
-			label: 'Text',
-			hex: '#000000',
-			rgb: { r: 0, g: 0, b: 0 },
-		};
-		const whiteContrast = getContrast(baseColor, white);
-		const blackContrast = getContrast(baseColor, black);
-		const textColor = whiteContrast > blackContrast ? white : black;
-		//add text color
-		this.addColor('Text', textColor.hex);
-
-		// if text color is white, make info/success/warning/error darker shades of default
-		const isTextWhite = textColor.hex === '#FFFFFF';
-		/** start with default colors for supports
-		 * info = blue #0099FF
-		 * success = green #33CC66
-		 * warning = orangey-yellow #FFCC00
-		 * error = red #FF3333
-		 * neutral = mid-gray #808099
-		 *
-		 * For Each Color
-		 * 		1) Calculate luminance of each
-		 * 		2) get contrast ratio with text color (white or black), goal is 7 or greater (AAA standard)
-		 * 		3) If color does not meet standard convert to HSL and raise or lower luminance through altering HSL Value
-		 * 		4) Convert back to RGB and re-check contrast ratio
-		 * 		5) repeat steps 3&4 as much as necessary
-		 * 		6) return final colour selection
-		 *
-		 * Assign colours to their 'roles' in the palette
-		 * */
 	}
 }
