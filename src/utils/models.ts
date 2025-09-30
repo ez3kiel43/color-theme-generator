@@ -24,6 +24,9 @@ export interface hexPalette {
 	base: string;
 	lightBkgs: string[];
 	darkBkgs: string[];
+	analogous1: string[];
+	analogous2: string[];
+	complementary: string[];
 	icon: string;
 }
 
