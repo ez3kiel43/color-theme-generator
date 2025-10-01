@@ -90,8 +90,8 @@ export class Palette {
 			base,
 			lightBkg: this.generateLightBkgs(base),
 			darkBkg: this.generateDarkBkgs(base),
-			analogous1: this.generateAnalogousBkgs(base, +35),
-			analogous2: this.generateAnalogousBkgs(base, -35),
+			analogous1: this.generateAnalogousBkgs(base, +25),
+			analogous2: this.generateAnalogousBkgs(base, -25),
 			complementary: this.generateComplementaryBkgs(base),
 			icon: base,
 		};
@@ -99,9 +99,9 @@ export class Palette {
 
 	/** Generate light background colors */
 	private generateLightBkgs(base: Color): Color[] {
-		const start = base.adjustLuminance(true, 0.8);
+		const start = base.adjustLuminance(true, 0.6);
 
-		const light = this.adjustColorForContrast(start, base, 3);
+		const light = this.adjustColorForContrast(start, this.base, 3);
 
 		return [
 			light,
@@ -110,16 +110,16 @@ export class Palette {
 			this.adjustColorForContrast(
 				light.adjustLuminance(true, 0.6).adjustSaturation(15),
 				base,
-				7
+				4.5
 			),
 		];
 	}
 
 	/** Generate dark background colors */
 	private generateDarkBkgs(base: Color): Color[] {
-		const start = base.adjustLuminance(false, 0.5);
+		const start = base.adjustLuminance(false, 0.6);
 
-		const dark = this.adjustColorForContrast(start, base, 3);
+		const dark = this.adjustColorForContrast(start, this.base, 3);
 
 		return [
 			dark,
@@ -128,7 +128,7 @@ export class Palette {
 			this.adjustColorForContrast(
 				dark.adjustLuminance(false, 0.5).adjustSaturation(15),
 				base,
-				7
+				4.5
 			),
 		];
 	}
