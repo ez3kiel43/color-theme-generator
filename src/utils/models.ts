@@ -20,19 +20,10 @@ export function hexToRgb(hex: string): Color {
 	return new Color(r, g, b);
 }
 
-export interface hexPalette {
-	base: string;
-	lightBkgs: string[];
-	darkBkgs: string[];
-	analogous1: string[];
-	analogous2: string[];
-	complementary: string[];
-	icon: string;
-}
-
-export interface previewPalette {
-	text: string;
-	bkg: string;
-	base: string;
-	accent?: string;
+export interface colorScheme {
+	[key: string]: Color;
+	base: Color;
+	background: Color;
+	text: Color;
+	accent: Color;
 }

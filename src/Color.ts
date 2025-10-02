@@ -88,8 +88,8 @@ export class Color {
 			Math.min(
 				100,
 				increase
-					? hsl.l + factor * Math.min(20, 100 - hsl.l) // only move up to 20 units
-					: hsl.l - factor * Math.min(20, hsl.l) // only move down to 20 units
+					? hsl.l + factor * Math.min(25, 100 - hsl.l) // only move up to 20 units
+					: hsl.l - factor * Math.min(25, hsl.l) // only move down to 20 units
 			)
 		);
 		return Color.hslToRgb({ h: hsl.h, s: hsl.s, l: newL });

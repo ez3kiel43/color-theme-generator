@@ -96,7 +96,8 @@ button#generate-palette {
 	justify-self: center;
 }
 
-#generate-palette:hover {
+#generate-palette:hover,
+#palette button:hover {
 	background-color: black;
 	color: white;
 }
@@ -109,9 +110,22 @@ button#generate-palette {
 #palette {
 	margin-top: 1rem;
 	display: flex;
-	flex-direction: column;
-	justify-content: center;
-	gap: 0.5rem;
+	flex-wrap: wrap;
+	flex-direction: row;
+	justify-content: flex-start;
+	gap: 2rem;
+}
+#palette p {
+	width: fit-content;
+}
+
+#palette button {
+	margin-top: 0;
+	border: black solid 2px;
+	cursor: pointer;
+	background-color: #e5e5e5;
+	color: black;
+	justify-self: center;
 }
 
 .swatch-container {
@@ -119,6 +133,7 @@ button#generate-palette {
 	margin-top: 1rem;
 	display: flex;
 	flex-direction: row;
+	width: 100%;
 }
 
 .swatch {
@@ -131,10 +146,6 @@ button#generate-palette {
 	line-height: 80px;
 	border-radius: 8px;
 	font-size: 0.8rem;
-}
-
-.swatch:hover {
-	cursor: pointer;
 }
 
 #palette-preview {

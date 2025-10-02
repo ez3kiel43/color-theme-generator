@@ -1,10 +1,4 @@
-import {
-	renderPalette,
-	bindGenerateButton,
-	bindBaseColorInput,
-	updatePreview,
-	bindSwatches,
-} from './dom';
+import { bindGenerateButton, bindBaseColorInput, renderSwatches } from './dom';
 import { Palette } from './Palette';
 import { hexToRgb } from './utils/models';
 
@@ -21,8 +15,16 @@ function init() {
 	// Bind the generate button
 	bindGenerateButton(() => {
 		palettes.push(currentPalette);
-		renderPalette(currentPalette?.getColors());
-		bindSwatches(updatePreview);
+		renderSwatches(
+			document.getElementById('mono-theme')! as HTMLDivElement,
+			currentPalette.schemes.monochrome
+		);
+		// renderSwatches(
+		// 	document.getElementById(
+		// 		'complementary-theme'
+		// 	)! as HTMLDivElement,
+		// 	currentPalette.schemes.complementary
+		// );
 	});
 }
 
